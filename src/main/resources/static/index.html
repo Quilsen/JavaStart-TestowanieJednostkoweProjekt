@@ -4,21 +4,18 @@
     <meta charset="UTF-8">
     <title>Zadanie Drag&Drop</title>
     <script type="text/javascript" src="jquery-3.3.1.min.js"></script>
-    <script type="text/javascript" src="jquery-sortable.js"></script>
+    <script type="text/javascript" src="jquery-sortable-min.js"></script>
     <script type="text/javascript">
 
         function initSorting() {
             $(function () {
                 $("ol.animal-list").sortable({
                     onDrop: function ($item, container, _super, event) {
-                        console.log('onDrop id', $item[0].id);
-                        console.log('onDrop index', $item.index());
                         $item.removeClass(container.group.options.draggedClass).removeAttr("style");
                         $("body").removeClass(container.group.options.bodyClass);
 
                         console.log($item[0].id);
                         var id = $item[0].id;
-                        console.log(id);
                         $.ajax("api/animals/" + id + "/position", {
                                 traditional: true,
                                 data: JSON.stringify({position: $item.index()}),
@@ -38,7 +35,7 @@
             $.getJSON("api/animals", function (data) {
                 var items = [];
                 $.each(data, function (key, val) {
-                    items.push("<li id='" + key + "'>" + val.name + "</li>");
+                    items.push("<li id='" + val.id + "'>" + val.name + "</li>");
                 });
 
                 $("<ol/>", {
@@ -82,15 +79,18 @@
         background: #eeeeee;
         cursor: pointer;
     }
+    ol {
+        padding-inline-start: 0;
+    }
 </style>
 <body>
 
-<h1>Zadanie Drag & Drop</h1>
+<div style="width: 400px; margin: auto; text-align: center">
 
-<div class="animal-list"></div>
+    <h1>Zadanie Drag & Drop</h1>
 
-<script type="text/javascript">
+    <div class="animal-list"></div>
 
-</script>
+</div>
 </body>
 </html>

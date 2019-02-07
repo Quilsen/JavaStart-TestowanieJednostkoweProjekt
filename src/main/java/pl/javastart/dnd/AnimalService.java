@@ -26,17 +26,17 @@ public class AnimalService {
         // TODO uzupełnij tę metodę oraz dodaj do niej testy, żeby sprawdzić czy działa
 
         // w ten sposób możesz pobrać wszystkie zwierzaki z bazy danych
-        List<Animal> allAnimals = animalRepository.findAll();
+        // List<Animal> allAnimals = animalRepository.findAll();
 
         // w ten sposób pobrac jednego zwierzaka po ID
-        Animal animal = animalRepository.findById(animalId).orElseThrow();
+        // Animal animal = animalRepository.findById(animalId).orElseThrow();
 
         // w ten sposób zapisać zmiany dotyczące zwierzaka do bazy
-        animal.setSortOrder(1000L);
-        animalRepository.save(animal);
+        // animal.setSortOrder(1000L);
+        // animalRepository.save(animal);
 
         // w ten sposób zapisać zmiany w całej liście zwierzaków na raz
-        animalRepository.saveAll(allAnimals);
+        // animalRepository.saveAll(allAnimals);
 
         // POWODZENIA!
     }
