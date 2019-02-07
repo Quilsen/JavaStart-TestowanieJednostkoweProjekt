@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Zadanie Drag&Drop</title>
+    <script type="text/javascript" src="jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" src="jquery-sortable.js"></script>
+    <script type="text/javascript">
+
+        function initSorting() {
+            $(function () {
+                $("ol.animal-list").sortable({
+                    onDrop: function ($item, container, _super, event) {
+                        console.log('onDrop id', $item[0].id);
+                        console.log('onDrop index', $item.index());
+                        $item.removeClass(container.group.options.draggedClass).removeAttr("style");
+                        $("body").removeClass(container.group.options.bodyClass);
+
+                        console.log($item[0].id);
+                        var id = $item[0].id;
+                        console.log(id);
+                        $.ajax("api/animals/" + id + "/position", {
+                                traditional: true,
+                                data: JSON.stringify({position: $item.index()}),
+                                type: 'POST',
+                                contentType: 'application/json',
+                                success: function () {
+                                    reloadData();
+                                }
+                            }
+                        );
+                    }
+                });
+            });
+        }
+
+        function reloadData() {
+            $.getJSON("api/animals", function (data) {
+                var items = [];
+                $.each(data, function (key, val) {
+                    items.push("<li id='" + key + "'>" + val.name + "</li>");
+                });
+
+                $("<ol/>", {
+                    "class": "animal-list",
+                    html: items.join("")
+                }).replaceAll(".animal-list");
+                initSorting();
+            });
+        }
+
+        reloadData();
+    </script>
+</head>
+<style type="text/css">
+    body.dragging, body.dragging * {
+        cursor: move !important;
+    }
+
+    .dragged {
+        position: absolute;
+        opacity: 0.5;
+        z-index: 2000;
+    }
+
+    ol.animal-list li.placeholder {
+        position: relative;
+        /** More li styles **/
+    }
+
+    ol.animal-list li.placeholder:before {
+        position: absolute;
+        /** Define arrowhead **/
+    }
+
+    ol li {
+        display: block;
+        margin: 5px;
+        padding: 5px;
+        border: 1px solid #cccccc;
+        color: #0088cc;
+        background: #eeeeee;
+        cursor: pointer;
+    }
+</style>
+<body>
+
+<h1>Zadanie Drag & Drop</h1>
+
+<div class="animal-list"></div>
+
+<script type="text/javascript">
+
+</script>
+</body>
+</html>
