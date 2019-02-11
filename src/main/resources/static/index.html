@@ -35,7 +35,7 @@
             $.getJSON("api/animals", function (data) {
                 var items = [];
                 $.each(data, function (key, val) {
-                    items.push("<li id='" + val.id + "'>" + val.name + "</li>");
+                    items.push("<li id='" + val.id + "'>" + val.name + ' (' + val.sortOrder + ')' + "</li>");
                 });
 
                 $("<ol/>", {
