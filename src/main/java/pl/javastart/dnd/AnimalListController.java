@@ -17,7 +17,7 @@ public class AnimalListController {
 
     @GetMapping("")
     public List<Animal> getAll() {
-        return animalService.findAll();
+        return animalService.findAllSorted();
     }
 
     @PostMapping("/{id}/position")

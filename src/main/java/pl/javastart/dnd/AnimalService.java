@@ -15,7 +15,7 @@ public class AnimalService {
         this.animalRepository = animalRepository;
     }
 
-    List<Animal> findAll() {
+    List<Animal> findAllSorted() {
         return animalRepository.findAll()
                 .stream()
                 .sorted(Comparator.comparing(Animal::getSortOrder))
