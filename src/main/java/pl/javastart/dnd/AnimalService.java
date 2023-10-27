@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 
 @Service
 public class AnimalService {
-
+    private static final long SORT_ORDER_STEP = 100;
     private AnimalRepository animalRepository;
 
     public AnimalService(AnimalRepository animalRepository) {
@@ -24,20 +24,44 @@ public class AnimalService {
 
     void move(Long animalId, int targetPosition) {
         // TODO uzupełnij tę metodę oraz dodaj do niej testy, żeby sprawdzić czy działa
+        Animal animal = animalRepository.findById(animalId).orElseThrow();
+        List<Animal> animalsSorted = findAllSorted();
 
-        // w ten sposób możesz pobrać wszystkie zwierzaki z bazy danych
-        // List<Animal> allAnimals = animalRepository.findAll();
+        try {
+            long sortOrderToSet = calculateSortOrder(targetPosition, animalsSorted);
+            animal.setSortOrder(sortOrderToSet);
+            animalRepository.save(animal);
+        } catch (CanNotCalculateSetSortOrderException e){
+            System.out.println(e.getMessage());
+            resetSortOrder(targetPosition, animal, animalsSorted);
+        }
+    }
 
-        // w ten sposób pobrac jednego zwierzaka po ID
-        // Animal animal = animalRepository.findById(animalId).orElseThrow();
+     long calculateSortOrder(int targetPosition, List<Animal> animalsSorted){
+        long sortOrderToSet;
+        if (targetPosition == 0) {
+            Animal animalFirst = animalsSorted.get(targetPosition);
+            sortOrderToSet = animalFirst.getSortOrder() - SORT_ORDER_STEP;
+        } else if (targetPosition == animalsSorted.size() - 1) {
+            Animal animalLast = animalsSorted.get(targetPosition);
+            sortOrderToSet = animalLast.getSortOrder() + SORT_ORDER_STEP;
+        } else {
+            Animal animalBefore = animalsSorted.get(targetPosition - 1);
+            Animal animalAfter = animalsSorted.get(targetPosition);
+            sortOrderToSet = (animalBefore.getSortOrder() + animalAfter.getSortOrder()) / 2;
+            if (animalAfter.getSortOrder() == sortOrderToSet || animalBefore.getSortOrder() == sortOrderToSet) {
+                throw new CanNotCalculateSetSortOrderException();
+            }
+        }
+        return sortOrderToSet;
+    }
 
-        // w ten sposób zapisać zmiany dotyczące zwierzaka do bazy
-        // animal.setSortOrder(1000L);
-        // animalRepository.save(animal);
-
-        // w ten sposób zapisać zmiany w całej liście zwierzaków na raz
-        // animalRepository.saveAll(allAnimals);
-
-        // POWODZENIA!
+    void resetSortOrder(int targetPosition, Animal animal, List<Animal> animalsSorted){
+        animalsSorted.remove(animal);
+        animalsSorted.add(targetPosition,animal);
+        for (int i = 0; i < animalsSorted.size(); i++) {
+            animalsSorted.get(i).setSortOrder((i + 1) * SORT_ORDER_STEP);
+        }
+        animalRepository.saveAll(animalsSorted);
     }
 }
